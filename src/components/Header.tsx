@@ -81,7 +81,11 @@ export default function Header() {
             </Text>
           </Box>
 
-          <Avatar></Avatar>
+          <Avatar
+            size="md"
+            name="Thamyris Sant Ana"
+            src="https://github.com/ThamyrisSantana.png"
+          />
         </Flex>
       </Flex>
     </Flex>
