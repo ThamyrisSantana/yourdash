@@ -1,14 +1,33 @@
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Button, Flex, Stack, Text } from "@chakra-ui/react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../components/form/Input";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
-export function Home() {
+type SignInFormData = {
+  email: string;
+  password: string;
+};
+
+const signInFormSchema = yup.object().shape({
+  email: yup
+    .string()
+    .required("Campo email é obrigatório")
+    .email("Email inválido"),
+  password: yup.string().required("Campo email é obrigatório"),
+});
+
+export function SignIn() {
+  const { register, handleSubmit, formState } = useForm({
+    resolver: yupResolver(signInFormSchema),
+  });
+
+  const { errors } = formState;
+
+  const handleSignIn: SubmitHandler<FieldValues> = async (values) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log(values);
+  };
   return (
     <Flex
       direction="column"
@@ -34,12 +53,29 @@ export function Home() {
           p="8"
           borderRadius={8}
           flexDir="column"
+          onSubmit={handleSubmit(handleSignIn)}
         >
           <Stack spacing={4}>
-            <Input name="email" label="E-mail" type="email" />
-            <Input name="password" label="Senha" type="password" />
+            <Input
+              label="E-mail"
+              type="email"
+              error={errors.email}
+              {...register("email")}
+            />
+            <Input
+              label="Senha"
+              type="password"
+              error={errors.password}
+              {...register("password")}
+            />
           </Stack>
-          <Button type="submit" mt="6" colorScheme="pink">
+
+          <Button
+            type="submit"
+            mt="6"
+            colorScheme="pink"
+            isLoading={formState.isSubmitting}
+          >
             Entrar
           </Button>
         </Flex>
@@ -48,4 +84,4 @@ export function Home() {
   );
 }
 
-export default Home;
+export default SignIn;
