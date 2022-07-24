@@ -14,7 +14,7 @@ const signInFormSchema = yup.object().shape({
     .string()
     .required("Campo email é obrigatório")
     .email("Email inválido"),
-  password: yup.string().required("Campo email é obrigatório"),
+  password: yup.string().required("Campo senha é obrigatório"),
 });
 
 export function SignIn() {
