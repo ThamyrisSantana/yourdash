@@ -1,8 +1,10 @@
 import { Box, Flex, SimpleGrid, Text, theme } from "@chakra-ui/react";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { SideBar } from "../components/SideBar";
 import Header from "../components/Header";
+import { AuthGoogleContext } from "../context/AuthGoogle";
+import { useRouter } from "next/router";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -57,45 +59,60 @@ export default function Dashboard() {
     },
   };
   const series = [{ name: "sere1", data: [12, 120, 60, 49, 200, 17, 35] }];
-  return (
-    <Flex direction="column" height="100vh">
-      <Header />
 
-      <Flex w="100%" my="6" maxW={1480} mx="auto" px="6">
-        <SideBar />
+  const { signed } = useContext(AuthGoogleContext);
+  const [hasPage, setHasPage] = useState(false);
+  const router = useRouter();
 
-        <SimpleGrid
-          flex="1"
-          gap="4"
-          minChildWidth="320px"
-          alignItems="flex-start"
-        >
-          <Box p={["6", "8"]} bgColor="gray.800" borderRadius={8} h="100%">
-            <Text fontSize="lg" mb="4">
-              Incritos da semana
-            </Text>
+  useEffect(() => {
+    setHasPage(true);
+  }, [signed]);
 
-            <Chart
-              options={options as any}
-              series={series}
-              type="area"
-              height={160}
-            />
-          </Box>
+  if (hasPage) {
+    if (signed) {
+      return (
+        <Flex direction="column" height="100vh">
+          <Header />
 
-          <Box p="8" bgColor="gray.800" borderRadius={8} h="100%">
-            <Text fontSize="lg" mb="4">
-              Taxa de abertura
-            </Text>
-            <Chart
-              options={options as any}
-              series={series}
-              type="area"
-              height={160}
-            />
-          </Box>
-        </SimpleGrid>
-      </Flex>
-    </Flex>
-  );
+          <Flex w="100%" my="6" maxW={1480} mx="auto" px="6">
+            <SideBar />
+
+            <SimpleGrid
+              flex="1"
+              gap="4"
+              minChildWidth="320px"
+              alignItems="flex-start"
+            >
+              <Box p={["6", "8"]} bgColor="gray.800" borderRadius={8} h="100%">
+                <Text fontSize="lg" mb="4">
+                  Incritos da semana
+                </Text>
+
+                <Chart
+                  options={options as any}
+                  series={series}
+                  type="area"
+                  height={160}
+                />
+              </Box>
+
+              <Box p="8" bgColor="gray.800" borderRadius={8} h="100%">
+                <Text fontSize="lg" mb="4">
+                  Taxa de abertura
+                </Text>
+                <Chart
+                  options={options as any}
+                  series={series}
+                  type="area"
+                  height={160}
+                />
+              </Box>
+            </SimpleGrid>
+          </Flex>
+        </Flex>
+      );
+    } else {
+      router.replace("/");
+    }
+  }
 }
